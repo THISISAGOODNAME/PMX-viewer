@@ -8,15 +8,11 @@
     <canvas id="glcanvas" width="640" height="480"></canvas>
 
     <script id="vertex-shader" type="x-shader/x-vertex">
-        #version 300 es
-
-        layout (location=0) in vec4 a_position;
-        layout (location=1) in vec2 a_uv;
-
-        out highp vec2 vTextureCoord;
-
+        attribute vec4 a_position;
+        attribute vec2 a_uv;
         uniform mat4 u_matrix;
 
+        varying highp vec2 vTextureCoord;
         void main() {
           // Multiply the position by the matrix.
           gl_Position = u_matrix * a_position;
@@ -25,18 +21,13 @@
     </script>
 
     <script id="fragment-shader" type="x-shader/x-fragment">
-        #version 300 es
-
         precision mediump float;
-
-        in highp vec2 vTextureCoord;
-        out vec4 fragColor;
-
+        varying highp vec2 vTextureCoord;
         uniform sampler2D uSampler;
 
         void main() {
-//          fragColor = vec4(0, 1, 0, 1);  // green
-          fragColor = texture(uSampler, vTextureCoord);
+          gl_FragColor = texture2D(uSampler, vTextureCoord);
+          // gl_FragColor = vec4(0, 1, 0, 1);  // green
         }
     </script>
 
@@ -49,10 +40,10 @@
         oReq.responseType = "arraybuffer";
 
         oReq.onload = function (oEvent) {
-            var arrayBuffer = oReq.response; // Note: not oReq.responseText
+            arrayBuffer = oReq.response; // Note: not oReq.responseText
             if (arrayBuffer) {
-                var file = new FileReader(arrayBuffer);
-                var pmx = new PMXFile(file);
+                file = new FileReader(arrayBuffer);
+                pmx = new PMXFile(file);
 
                 var textures = [];
 
@@ -127,7 +118,7 @@
         }
 
         // extract the contents of the script tag.
-        var shaderSource = shaderScript.text.trim();
+        var shaderSource = shaderScript.text;
 
         // If we didn't pass in a type, use the 'type' from
         // the script tag.
@@ -142,14 +133,14 @@
         }
 
         return compileShader(gl, shaderSource, opt_shaderType);
-    }
+    };
 
     function createProgramFromScripts(
             gl, vertexShaderId, fragmentShaderId) {
         var vertexShader = createShaderFromScript(gl, vertexShaderId);
         var fragmentShader = createShaderFromScript(gl, fragmentShaderId);
         return createProgram(gl, vertexShader, fragmentShader);
-    }
+    };
 
 
     var whiteTex;
@@ -157,7 +148,7 @@
     function start(){
         // Get A WebGL context
         var canvas = document.getElementById("glcanvas");
-        gl = canvas.getContext("webgl2");
+        gl = canvas.getContext("experimental-webgl");
 
         gl.enable(gl.DEPTH_TEST);
 
@@ -238,7 +229,7 @@
             0, 0, (near + far) * rangeInv, -1,
             0, 0, near * far * rangeInv * 2, 0
         ];
-    }
+    };
 
 
     function makeTranslation(tx, ty, tz) {
@@ -260,7 +251,7 @@
             s, 0, c, 0,
             0, 0, 0, 1
         ];
-    }
+    };
 
     function matrixMultiply(a, b) {
         var a00 = a[0*4+0];
