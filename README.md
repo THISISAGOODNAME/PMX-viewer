@@ -8,6 +8,6 @@ For modern browser(chrome 58+/Firefox 53+)
 
 [webgl2 version](http://aicdg.com/PMX-viewer-webgl2/)
 
-For old broswer(webgl supported)
+For old broswer( support webgl)
 
 [webgl1 version](http://aicdg.com/PMX-viewer-webgl2/index-webgl.html)
